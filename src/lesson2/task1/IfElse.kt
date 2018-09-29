@@ -81,9 +81,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double {
     val s = (t1 * v1 + t2 * v2 + t3 * v3) / 2
-    if (t1 * v1 > s) return s / v1
-    if (t2 * v2 > s - t1 * v1) return t1 + (s - t1 * v1) / v2
-    return t1 + t2 + (s - t1 * v1 - t2 * v2) / v3
+    return when {
+        t1 * v1 > s -> s / v1
+        t2 * v2 > s - t1 * v1 -> t1 + (s - t1 * v1) / v2
+        else -> t1 + t2 + (s - t1 * v1 - t2 * v2) / v3
+    }
 }
 
 /**
@@ -132,9 +134,9 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int = when {
-    (a >= b + c || b >= a + c || c >= a + b) -> -1
-    (sqr(a) + sqr(b) == sqr(c) || sqr(a) + sqr(c) == sqr(b) || sqr(b) + sqr(c) == sqr(a)) -> 1
-    (sqr(a) + sqr(b) < sqr(c) || sqr(a) + sqr(c) < sqr(b) || sqr(b) + sqr(c) < sqr(a)) -> 2
+    a >= b + c || b >= a + c || c >= a + b -> -1
+    sqr(a) + sqr(b) == sqr(c) || sqr(a) + sqr(c) == sqr(b) || sqr(b) + sqr(c) == sqr(a) -> 1
+    sqr(a) + sqr(b) < sqr(c) || sqr(a) + sqr(c) < sqr(b) || sqr(b) + sqr(c) < sqr(a) -> 2
     else -> 0
 }
 
@@ -147,9 +149,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = when {
  * Если пересечения нет, вернуть -1.
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = when {
-    (c > b || a > d) -> -1
-    (c >= a && d >= b) -> abs(b - c)
-    (c >= a && d <= b) -> abs(d - c)
-    (a >= c && d >= b) -> abs(b - a)
-    else -> abs(d - a)
+    c > b || a > d -> -1
+    c == b || a == d -> 0
+    c > a && d > b -> b - c
+    a > c && d < b -> d - a
+    a < c && d < b -> d - c
+    else -> b - a
 }

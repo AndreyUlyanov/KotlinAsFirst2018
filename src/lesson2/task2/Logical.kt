@@ -2,8 +2,7 @@
 package lesson2.task2
 
 import lesson1.task1.sqr
-import kotlin.math.abs
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Пример
@@ -71,6 +70,8 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean =
-        (a <= r && b <= s) || (b <= r && a <= s) || (a <= r && c <= s) ||
-                (c <= r && a <= s) || (b <= r && c <= s) || (c <= r && b <= s)
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean  {
+    val mi = min(a, min(b, c))
+    val sr = a + b + c - mi - max(a, max(b, c))
+    return (mi <= r && sr <= s) || (mi <= s && sr <= r)
+}
