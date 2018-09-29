@@ -70,7 +70,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var count = 0
-    var number = n
+    var number = abs(n)
     do {
         count++
         number /= 10
@@ -110,8 +110,8 @@ fun fib(n: Int): Int {
 fun lcm(m: Int, n: Int): Int = m * n / nod(m, n)
 
 fun nod(a: Int, b: Int): Int {
-    var a1 = a
-    var b1 = b
+    var a1 = abs(a)
+    var b1 = abs(b)
     while (a1 != 0 && b1 != 0) {
         if (a1 > b1) a1 %= b1
         else b1 %= a1
@@ -237,7 +237,7 @@ fun revert(n: Int): Int {
         ans *= 10
         ans += m % 10
         m /= 10
-    } while (m % 10 > 0)
+    } while (m % 10 > 0 || m >= 10)
     return ans
 }
 
@@ -267,7 +267,7 @@ fun hasDifferentDigits(n: Int): Boolean {
     do {
         if (number != m % 10) return true
         m /= 10
-    } while (m % 10 > 0)
+    } while (m % 10 > 0 || m > 10)
     return false
 }
 
