@@ -234,11 +234,10 @@ fun revert(n: Int): Int {
     var m = n
     var ans = 0
     do {
-        ans += m % 10
         ans *= 10
+        ans += m % 10
         m /= 10
     } while (m % 10 > 0)
-    ans /= 10
     return ans
 }
 
