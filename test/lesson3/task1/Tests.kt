@@ -200,6 +200,7 @@ class Tests {
         assertEquals(123456789, revert(987654321))
         assertEquals(746384741, revert(147483647))
         assertEquals(598242895, revert(598242895))
+        assertEquals(407636091, revert(190636704))
     }
 
     @Test
@@ -210,6 +211,7 @@ class Tests {
         assertTrue(isPalindrome(15751))
         assertTrue(isPalindrome(24688642))
         assertTrue(isPalindrome(598242895))
+        assertTrue(isPalindrome(2080880802))
     }
 
     @Test

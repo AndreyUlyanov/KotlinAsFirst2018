@@ -86,19 +86,14 @@ fun digitNumber(n: Int): Int {
  */
 fun fib(n: Int): Int {
     var i: Int
-    var j = 1
-    var k = 2
-    for (m in 4..n) {
+    var j = 0
+    var k = 1
+    for (m in 2..n) {
         i = j
         j = k
         k = i + j
     }
-    return when (n) {
-        1 -> 1
-        2 -> 1
-        3 -> 2
-        else -> k
-    }
+    return k
 }
 
 /**
@@ -107,7 +102,7 @@ fun fib(n: Int): Int {
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = m * n / nod(m, n)
+fun lcm(m: Int, n: Int): Int = m / nod(m, n) * n
 
 fun nod(a: Int, b: Int): Int {
     var a1 = abs(a)
@@ -126,11 +121,11 @@ fun nod(a: Int, b: Int): Int {
  */
 fun minDivisor(n: Int): Int {
     var i = 2
-    while (i <= n / 2) {
+    while (i <= sqrt(n.toDouble())) {
         if (n % i == 0) break
         i++
     }
-    return if (i < n / 2) i else n
+    return if (i <= sqrt(n.toDouble())) i else n
 }
 
 /**
@@ -198,9 +193,11 @@ fun sin(x: Double, eps: Double): Double {
     var ans = 0.0
     var n = 1.0
     val y = x % (2 * PI)
-    while (abs(pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())) >= eps) {
-        ans += pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())
+    var d = pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())
+    while (abs(d) >= eps) {
+        ans += d
         n++
+        d = pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())
     }
     return ans
 }
@@ -216,9 +213,11 @@ fun cos(x: Double, eps: Double): Double {
     var ans = 0.0
     var n = 0.0
     val y = x % (2 * PI)
-    while (abs(pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())) >= eps) {
-        ans += pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())
+    var d = pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())
+    while (abs(d) >= eps) {
+        ans += d
         n++
+        d = pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())
     }
     return ans
 }
@@ -237,7 +236,7 @@ fun revert(n: Int): Int {
         ans *= 10
         ans += m % 10
         m /= 10
-    } while (m % 10 > 0 || m >= 10)
+    } while (m > 0)
     return ans
 }
 
@@ -267,7 +266,7 @@ fun hasDifferentDigits(n: Int): Boolean {
     do {
         if (number != m % 10) return true
         m /= 10
-    } while (m % 10 > 0 || m > 10)
+    } while (m > 0)
     return false
 }
 
