@@ -4,6 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import java.lang.Math.pow
+import java.security.spec.MGF1ParameterSpec
 import kotlin.math.sqrt
 
 /**
@@ -303,12 +304,8 @@ fun roman(n: Int): String {
     list += n / 100 % 10
     list += n % 100 / 10
     list += n % 10
-    for (i in 1..list[0]) {
-        ans += 'M'
-    }
-    ans += romanDigit(list[1], 3)
-    ans += romanDigit(list[2], 2)
-    ans += romanDigit(list[3], 1)
+    for (i in 1..list[0]) ans += 'M'
+    for (i in 1..3) ans += romanDigit(list[i], 3 - i + 1)
     return ans
 }
 
@@ -337,42 +334,18 @@ fun romanDigit(number: Int, digit: Int): String {
     when (number) {
         0 -> str = ""
         1 -> str += c
-        2 -> {
-            str += c
-            str += c
-        }
-        3 -> {
-            str += c
-            str += c
-            str += c
-        }
-        4 -> {
-            str += c
-            str += c1
-        }
+        2 -> str += "$c$c"
+        3 -> str += "$c$c$c"
+        4 -> str += "$c$c1"
         5 -> str += c1
-        6 -> {
-            str += c1
-            str += c
-        }
-        7 -> {
-            str += c1
-            str += c
-            str += c
-        }
-        8 -> {
-            str += c1
-            str += c
-            str += c
-            str += c
-        }
-        else -> {
-            str += c
-            str += c2
-        }
+        6 -> str += "$c1$c"
+        7 -> str += "$c1$c$c"
+        8 -> str += "$c1$c$c$c"
+        else -> str += "$c$c2"
     }
     return str
 }
+
 /**
  * Очень сложная
  *
@@ -380,4 +353,80 @@ fun romanDigit(number: Int, digit: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    var ans = ""
+    val list = mutableListOf<Int>()
+    list += n / 100000
+    list += n / 10000 % 10
+    list += n / 1000 % 10
+    list += n / 100 % 10
+    list += n % 100 / 10
+    list += n % 10
+    ans += russianDigit(list[0], 0, 6)
+    for (i in 1..5) {
+        if (ans == "" && i == 2 && list[i] == 0) continue
+        else ans += russianDigit(list[i], list[i - 1], 6 - i)
+
+    }
+    return ans.trim()
+}
+
+fun russianDigit(number: Int, number1: Int, digit: Int): String {
+    var str = ""
+    when (digit) {
+        1, 4 -> if (number1 != 1) {
+            str += when (number) {
+                1 -> if (digit == 1) " один" else " одна тысяча"
+                2 -> if (digit == 1) " два" else " две тысячи"
+                3 -> if (digit == 1) " три" else " три тысячи"
+                4 -> if (digit == 1) " четыре" else " четыре тысячи"
+                5 -> if (digit == 1) " пять" else " пять тысяч"
+                6 -> if (digit == 1) " шесть" else " шесть тысяч"
+                7 -> if (digit == 1) " семь" else " семь тысяч"
+                8 -> if (digit == 1) " восемь" else " восемь тысяч"
+                9 -> if (digit == 1) " девять" else " девять тысяч"
+                else -> if (digit == 1) "" else " тысяч"
+            }
+
+        } else {
+            str += when (number) {
+                1 -> " одиннадцать"
+                2 -> " двенадцать"
+                3 -> " тринадцать"
+                4 -> " четырнадцать"
+                5 -> " пятнадцать"
+                6 -> " шестнадцать"
+                7 -> " семнадцать"
+                8 -> " восемнадцать"
+                9 -> " девятнадцать"
+                else -> " десять"
+            }
+            if (digit == 4) str += " тысяч"
+        }
+        2, 5 -> str += when (number) {
+            1 -> ""
+            2 -> " двадцать"
+            3 -> " тридцать"
+            4 -> " сорок"
+            5 -> " пятьдесят"
+            6 -> " шестьдесят"
+            7 -> " семьдесят"
+            8 -> " восемьдесят"
+            9 -> " девяносто"
+            else -> ""
+        }
+        3, 6 -> str += when (number) {
+            1 -> " сто"
+            2 -> " двести"
+            3 -> " триста"
+            4 -> " четыреста"
+            5 -> " пятьсот"
+            6 -> " шестьсот"
+            7 -> " семьсот"
+            8 -> " восемьсот"
+            9 -> " девятьсот"
+            else -> ""
+        }
+    }
+    return str
+}
