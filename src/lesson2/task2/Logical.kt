@@ -70,7 +70,7 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
-fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean  {
+fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
     val mi = minOf(a, b, c)
     val sr = a + b + c - mi - maxOf(a, b, c)
     return mi <= min(r, s) && sr <= max(r, s)

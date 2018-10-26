@@ -4,7 +4,7 @@ package lesson4.task1
 
 import lesson1.task1.discriminant
 import java.lang.Math.pow
-import java.security.spec.MGF1ParameterSpec
+import java.time.temporal.ChronoField
 import kotlin.math.sqrt
 
 /**
@@ -137,11 +137,9 @@ fun mean(list: List<Double>): Double = if (list.isEmpty()) 0.0 else list.sum() /
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isNotEmpty()) {
-        val sr = list.sum() / list.size
-        for (i in 0 until list.size) {
-            list[i] -= sr
-        }
+    val sr = list.sum() / list.size
+    for (i in 0 until list.size) {
+        list[i] -= sr
     }
     return list
 }
@@ -154,7 +152,6 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
 fun times(a: List<Double>, b: List<Double>): Double {
-    if (a.isEmpty()) return 0.0
     val c = mutableListOf<Double>()
     for (i in 0 until a.size) {
         c += a[i] * b[i]
@@ -210,13 +207,11 @@ fun factorize(n: Int): List<Int> {
         if (m % i == 0) {
             ans += i
             m /= i
-            i--
-        }
+        } else i++
         if (i > sqrt(m.toDouble())) {
             ans += m
             break
         }
-        i++
     } while (m != 1)
     return ans
 }
@@ -245,11 +240,7 @@ fun convert(n: Int, base: Int): List<Int> {
         m /= base
     }
     ans += m
-    for (i in 0 until ans.size / 2) {
-        ans[i] = ans[i] + ans[ans.size - i - 1]
-        ans[ans.size - i - 1] = ans[i] - ans[ans.size - i - 1]
-        ans[i] -= ans[ans.size - i - 1]
-    }
+    ans.reverse()
     return ans
 }
 
@@ -272,8 +263,10 @@ fun convertToString(n: Int, base: Int): String = n.toString(base)
  */
 fun decimal(digits: List<Int>, base: Int): Int {
     var ans = 0.0
-    for (i in 0 until digits.size) {
-        ans += digits[i] * pow(base.toDouble(), (digits.size - i - 1).toDouble())
+    var st = 1
+    for (i in digits.size - 1 downTo 0) {
+        ans += digits[i] * st
+        st *= base
     }
     return ans.toInt()
 }
@@ -298,52 +291,36 @@ fun decimalFromString(str: String, base: Int): Int = str.toInt(base)
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun roman(n: Int): String {
-    var ans = ""
+    val ans = mutableListOf<String>()
     val list = mutableListOf<Int>()
-    list += n / 1000
-    list += n / 100 % 10
-    list += n % 100 / 10
-    list += n % 10
-    for (i in 1..list[0]) ans += 'M'
-    for (i in 1..3) ans += romanDigit(list[i], 3 - i + 1)
-    return ans
+    var m = n
+    for (i in 1..4) {
+        list += m % 10
+        m /= 10
+    }
+    list.reverse()
+    for (i in 1..list[0]) ans.add("M")
+    for (i in 1..3) ans.add(romanDigit(list[i], 3 - i + 1))
+    return ans.joinToString(separator = "")
 }
 
 fun romanDigit(number: Int, digit: Int): String {
-    var str = ""
-    val c: Char
-    val c1: Char
-    val c2: Char
-    when (digit) {
-        1 -> {
-            c = 'I'
-            c1 = 'V'
-            c2 = 'X'
-        }
-        2 -> {
-            c = 'X'
-            c1 = 'L'
-            c2 = 'C'
-        }
-        else -> {
-            c = 'C'
-            c1 = 'D'
-            c2 = 'M'
-        }
+    var list = listOf<Triple<String, String, String>>()
+    list += Triple("I", "V", "X")
+    list += Triple("X", "L", "C")
+    list += Triple("C", "D", "M")
+    return when (number) {
+        0 -> ""
+        1 -> list[digit - 1].first
+        2 -> list[digit - 1].first + list[digit - 1].first
+        3 -> list[digit - 1].first + list[digit - 1].first + list[digit - 1].first
+        4 -> list[digit - 1].first + list[digit - 1].second
+        5 -> list[digit - 1].second
+        6 -> list[digit - 1].second + list[digit - 1].first
+        7 -> list[digit - 1].second + list[digit - 1].first + list[digit - 1].first
+        8 -> list[digit - 1].second + list[digit - 1].first + list[digit - 1].first + list[digit - 1].first
+        else -> list[digit - 1].first + list[digit - 1].third
     }
-    when (number) {
-        0 -> str = ""
-        1 -> str += c
-        2 -> str += "$c$c"
-        3 -> str += "$c$c$c"
-        4 -> str += "$c$c1"
-        5 -> str += c1
-        6 -> str += "$c1$c"
-        7 -> str += "$c1$c$c"
-        8 -> str += "$c1$c$c$c"
-        else -> str += "$c$c2"
-    }
-    return str
 }
 
 /**
@@ -354,79 +331,88 @@ fun romanDigit(number: Int, digit: Int): String {
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
 fun russian(n: Int): String {
-    var ans = ""
+    val ans = mutableListOf<String>()
     val list = mutableListOf<Int>()
-    list += n / 100000
-    list += n / 10000 % 10
-    list += n / 1000 % 10
-    list += n / 100 % 10
-    list += n % 100 / 10
-    list += n % 10
-    ans += russianDigit(list[0], 0, 6)
-    for (i in 1..5) {
-        if (ans == "" && i == 2 && list[i] == 0) continue
-        else ans += russianDigit(list[i], list[i - 1], 6 - i)
-
+    list += n / 1000
+    list += n % 1000
+    ans += russianDigits(list[0])
+    if (ans.isNotEmpty()) {
+        when (list[0] % 10) {
+            1 -> {
+                ans.remove(ans.last())
+                ans += "одна"
+                ans += "тысяча"
+            }
+            2 -> {
+                ans.remove(ans.last())
+                ans += "две"
+                ans += "тысячи"
+            }
+            3, 4 -> ans += "тысячи"
+            else -> ans += "тысяч"
+        }
     }
-    return ans.trim()
+    ans.filter { it != "" }
+    ans += russianDigits(list[1])
+    return ans.joinToString(separator = " ")
 }
 
-fun russianDigit(number: Int, number1: Int, digit: Int): String {
-    var str = ""
-    when (digit) {
-        1, 4 -> if (number1 != 1) {
-            str += when (number) {
-                1 -> if (digit == 1) " один" else " одна тысяча"
-                2 -> if (digit == 1) " два" else " две тысячи"
-                3 -> if (digit == 1) " три" else " три тысячи"
-                4 -> if (digit == 1) " четыре" else " четыре тысячи"
-                5 -> if (digit == 1) " пять" else " пять тысяч"
-                6 -> if (digit == 1) " шесть" else " шесть тысяч"
-                7 -> if (digit == 1) " семь" else " семь тысяч"
-                8 -> if (digit == 1) " восемь" else " восемь тысяч"
-                9 -> if (digit == 1) " девять" else " девять тысяч"
-                else -> if (digit == 1) "" else " тысяч"
-            }
-
-        } else {
-            str += when (number) {
-                1 -> " одиннадцать"
-                2 -> " двенадцать"
-                3 -> " тринадцать"
-                4 -> " четырнадцать"
-                5 -> " пятнадцать"
-                6 -> " шестнадцать"
-                7 -> " семнадцать"
-                8 -> " восемнадцать"
-                9 -> " девятнадцать"
-                else -> " десять"
-            }
-            if (digit == 4) str += " тысяч"
+fun russianDigits(number: Int): List<String> {
+    var list = listOf<Int>()
+    var ans = listOf<String>()
+    list += number / 100
+    list += number / 10 % 10
+    list += number % 10
+    ans += when (list[0]) {
+        1 -> "сто"
+        2 -> "двести"
+        3 -> "триста"
+        4 -> "четыреста"
+        5 -> "пятьсот"
+        6 -> "шестьсот"
+        7 -> "семьсот"
+        8 -> "восемьсот"
+        9 -> "девятьсот"
+        else -> ""
+    }
+    ans += when (list[1]) {
+        1 -> ""
+        2 -> "двадцать"
+        3 -> "тридцать"
+        4 -> "сорок"
+        5 -> "пятьдесят"
+        6 -> "шестьдесят"
+        7 -> "семьдесят"
+        8 -> "восемьдесят"
+        9 -> "девяносто"
+        else -> ""
+    }
+    if (list[1] == 1) {
+        ans += when (list[2]) {
+            1 -> "одиннадцать"
+            2 -> "двенадцать"
+            3 -> "тринадцать"
+            4 -> "четырнадцать"
+            5 -> "пятнадцать"
+            6 -> "шестнадцать"
+            7 -> "семнадцать"
+            8 -> "восемнадцать"
+            9 -> "девятнадцать"
+            else -> "десять"
         }
-        2, 5 -> str += when (number) {
-            1 -> ""
-            2 -> " двадцать"
-            3 -> " тридцать"
-            4 -> " сорок"
-            5 -> " пятьдесят"
-            6 -> " шестьдесят"
-            7 -> " семьдесят"
-            8 -> " восемьдесят"
-            9 -> " девяносто"
-            else -> ""
-        }
-        3, 6 -> str += when (number) {
-            1 -> " сто"
-            2 -> " двести"
-            3 -> " триста"
-            4 -> " четыреста"
-            5 -> " пятьсот"
-            6 -> " шестьсот"
-            7 -> " семьсот"
-            8 -> " восемьсот"
-            9 -> " девятьсот"
+    } else {
+        ans += when (list[2]) {
+            1 -> "один"
+            2 -> "два"
+            3 -> "три"
+            4 -> "четыре"
+            5 -> "пять"
+            6 -> "шесть"
+            7 -> "семь"
+            8 -> "восемь"
+            9 -> "девять"
             else -> ""
         }
     }
-    return str
+    return ans.filter { it != "" }
 }

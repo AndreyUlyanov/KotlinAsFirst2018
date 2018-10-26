@@ -122,10 +122,10 @@ fun nod(a: Int, b: Int): Int {
 fun minDivisor(n: Int): Int {
     var i = 2
     while (i <= sqrt(n.toDouble())) {
-        if (n % i == 0) break
+        if (n % i == 0) return i
         i++
     }
-    return if (i <= sqrt(n.toDouble())) i else n
+    return n
 }
 
 /**
@@ -133,7 +133,7 @@ fun minDivisor(n: Int): Int {
  *
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
-fun maxDivisor(n: Int): Int = if (minDivisor(n) == n) 1 else n / minDivisor(n)
+fun maxDivisor(n: Int): Int = n / minDivisor(n)
 
 /**
  * Простая
@@ -196,8 +196,8 @@ fun sin(x: Double, eps: Double): Double {
     var d = pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())
     while (abs(d) >= eps) {
         ans += d
+        d *= -1 * y * y / (4 * n * n + 2 * n)
         n++
-        d = pow(-1.0, n + 1) * pow(y, 2 * n - 1) / factorial((2 * n - 1).toInt())
     }
     return ans
 }
@@ -216,8 +216,8 @@ fun cos(x: Double, eps: Double): Double {
     var d = pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())
     while (abs(d) >= eps) {
         ans += d
+        d *= -1 * y * y / (4 * n * n + 6 * n + 2)
         n++
-        d = pow(-1.0, n) * pow(y, 2 * n) / factorial((2 * n).toInt())
     }
     return ans
 }
