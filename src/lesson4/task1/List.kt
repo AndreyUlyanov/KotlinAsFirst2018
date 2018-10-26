@@ -204,14 +204,14 @@ fun factorize(n: Int): List<Int> {
     val ans = mutableListOf<Int>()
     var i = 2
     do {
+        if (i > sqrt(n.toDouble())) {
+            ans += m
+            break
+        }
         if (m % i == 0) {
             ans += i
             m /= i
         } else i++
-        if (i > sqrt(m.toDouble())) {
-            ans += m
-            break
-        }
     } while (m != 1)
     return ans
 }
@@ -337,18 +337,18 @@ fun russian(n: Int): String {
     list += n % 1000
     ans += russianDigits(list[0])
     if (ans.isNotEmpty()) {
-        when (list[0] % 10) {
-            1 -> {
+        when (ans.last()) {
+            "один" -> {
                 ans.remove(ans.last())
                 ans += "одна"
                 ans += "тысяча"
             }
-            2 -> {
+            "два" -> {
                 ans.remove(ans.last())
                 ans += "две"
                 ans += "тысячи"
             }
-            3, 4 -> ans += "тысячи"
+            "три", "четыре" -> ans += "тысячи"
             else -> ans += "тысяч"
         }
     }
