@@ -218,14 +218,19 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val ans = mutableMapOf<String, Set<String>>()
+    val dop = mutableMapOf<String, Set<String>>()
     ans += friends
-    for (i in 1..2) for ((name, set) in ans) {
-        for (element in set)
-            if (ans[element] != null) ans[name] = ans[name]!! + ans[element]!!
-            else ans[element] = setOf()
-        ans[name] = ans[name]!! - "$name"
+    dop += ans
+    for (i in 1..3) {
+        for ((name, set) in ans) {
+            for (element in set)
+                if (dop[element] != null) dop[name] = dop[name]!! + dop[element]!!
+                else dop[element] = setOf()
+        }
+        ans.clear()
+        ans += dop
     }
-
+    for ((name, set) in ans) if (name in set) ans[name] = set - name
     return ans
 }
 
@@ -257,7 +262,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
 fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
     val ans = mutableListOf<String>()
     for (element in a) {
-        if (element in b) ans.add(element)
+        if (element in b && element !in ans) ans.add(element)
     }
     return ans
 }
@@ -273,11 +278,13 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> {
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val charsInWord = mutableListOf<Char>()
+    val lowerChars = mutableListOf<Char>()
+    for (i in 0 until chars.size) lowerChars.add(chars[i].toLowerCase())
     for (i in 0 until word.length) {
-        if (word[i] !in charsInWord) charsInWord.add(word[i])
+        if (word[i] !in charsInWord) charsInWord.add(word[i].toLowerCase())
     }
     for (element in charsInWord) {
-        if (element !in chars) return false
+        if (element !in lowerChars) return false
     }
     return true
 }
