@@ -145,7 +145,7 @@ class Tests {
                 buildGrades(mapOf("Марат" to 3, "Семён" to 5, "Михаил" to 5))
         )
         assertEquals(
-                mapOf(3 to listOf("Семён", "Михаил", "Марат")),
+                mapOf(3 to listOf("Марат", "Семён", "Михаил")),
                 buildGrades(mapOf("Марат" to 3, "Семён" to 3, "Михаил" to 3))
         )
     }
@@ -223,6 +223,25 @@ class Tests {
                                 "Marat" to setOf("Mikhail", "Sveta"),
                                 "Sveta" to setOf("Marat"),
                                 "Mikhail" to setOf("Sveta")
+                        )
+                )
+        )
+        assertEquals(
+                mapOf(
+                        "Mikhail" to setOf("Sveta", "Kate", "Marat", "John", "James"),
+                        "Sveta" to setOf("Kate", "Marat", "John", "James"),
+                        "Kate" to setOf("Marat", "John", "James"),
+                        "Marat" to setOf("John", "James"),
+                        "John" to setOf("Marat", "James"),
+                        "James" to setOf()
+                ),
+                propagateHandshakes(
+                        mapOf(
+                                "Mikhail" to setOf("Sveta"),
+                                "Sveta" to setOf("Kate"),
+                                "Marat" to setOf("John"),
+                                "Kate" to setOf("Marat"),
+                                "John" to setOf("Marat", "James")
                         )
                 )
         )
