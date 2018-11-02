@@ -283,7 +283,7 @@ class Tests {
     @Tag("Normal")
     fun canBuildFrom() {
         assertFalse(canBuildFrom(emptyList(), "foo"))
-        assertTrue(canBuildFrom(listOf('a', 'b', 'o'), "baobab"))
+        assertTrue(canBuildFrom(listOf('A', 'b', 'o'), "baobab"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'r'), "Marat"))
     }
 
@@ -332,6 +332,14 @@ class Tests {
     @Test
     @Tag("Impossible")
     fun bagPacking() {
+        assertEquals(
+                setOf("a", "d"),
+                bagPacking(
+                        mapOf("a" to (500 to 200), "b" to (700 to 100), "c" to (1000 to 150),
+                                "d" to (1200 to 200), "e" to (1900 to 350)),
+                        1700
+                )
+        )
         assertEquals(
                 setOf("Кубок"),
                 bagPacking(
