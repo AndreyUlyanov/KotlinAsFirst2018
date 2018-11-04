@@ -341,6 +341,16 @@ class Tests {
                 )
         )
         assertEquals(
+                setOf("1", "5", "8", "11", "14"),
+                bagPacking(
+                        mapOf("0" to (148 to 148), "1" to (1 to 149), "2" to (13 to 50), "3" to (2 to 57),
+                                "4" to (448 to 318), "5" to (210 to 428), "6" to (148 to 221), "7" to (149 to 2),
+                                "8" to (1 to 1), "9" to (312 to 55), "10" to (210 to 149), "11" to (148 to 266),
+                                "12" to (368 to 149), "13" to (478 to 149), "14" to (1 to 149), "15" to (262 to 2)),
+                        361
+                )
+        )
+        assertEquals(
                 setOf("Кубок"),
                 bagPacking(
                         mapOf("Кубок" to (500 to 2000), "Слиток" to (1000 to 5000)),

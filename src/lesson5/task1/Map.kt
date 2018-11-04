@@ -261,7 +261,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val lowerChars = mutableSetOf<Char>()
     for (i in 0 until chars.size) lowerChars.add(chars[i].toLowerCase())
     for (i in 0 until word.length) charsInWord.add(word[i].toLowerCase())
-    return charsInWord == lowerChars
+    return charsInWord == lowerChars || word == ""
 }
 
 /**
@@ -348,18 +348,19 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
 fun bagPacking(treasures: Map<String, Pair<Int, Int>>, capacity: Int): Set<String> {
     val table = mutableMapOf<Int, Pair<Int, Set<String>>>()
     val dopTable = mutableMapOf<Int, Pair<Int, Set<String>>>()
-    val oneTreasureTable = mutableMapOf<Int, Pair<Int, Set<String>>>()
     var maxvalue = -1
     val ans = mutableSetOf<String>()
     for ((name, info) in treasures) {
-        oneTreasureTable[info.first] = Pair(info.second, setOf(name))
+        if (info.second > table[info.first]?.first ?: -1)
+            table[info.first] = Pair(info.second, setOf(name))
     }
-    table += oneTreasureTable
-    for (u in 1..2) for ((weight, info) in oneTreasureTable) {
-        for ((wt, pair) in table) {
-            if (info.second.intersect(pair.second).isEmpty()) {
-                if (table[wt + weight] == null || table[wt + weight]!!.first < info.first + pair.first) {
-                    dopTable[wt + weight] = Pair(info.first + pair.first, info.second + pair.second)
+    for (u in 1..2) for ((name, pair) in treasures) {
+        val value = pair.second
+        val wt = pair.first
+        for ((weight, info) in table) {
+            if (name !in info.second) {
+                if (table[wt + weight] == null || table[wt + weight]!!.first < info.first + value) {
+                    dopTable[wt + weight] = Pair(info.first + value, info.second + name)
                 }
             }
         }
