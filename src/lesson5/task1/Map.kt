@@ -172,11 +172,9 @@ fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Doub
  *     "печенье"
  *   ) -> "Мария"
  */
-fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): String? {
-    val ans = stuff.filter { it.value.first == kind }
-    val name = ans.minBy { it.value.second }
-    return name?.key
-}
+fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String) =
+        stuff.filter { it.value.first == kind }.minBy { it.value.second }?.key
+
 
 /**
  * Сложная
@@ -261,7 +259,7 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean {
     val lowerChars = mutableSetOf<Char>()
     for (i in 0 until chars.size) lowerChars.add(chars[i].toLowerCase())
     for (i in 0 until word.length) charsInWord.add(word[i].toLowerCase())
-    return charsInWord == lowerChars || word == ""
+    return charsInWord.intersect(lowerChars) == charsInWord
 }
 
 /**
@@ -291,16 +289,8 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean {
-    val ans = mutableSetOf<Set<Char>>()
-    val dop = mutableSetOf<Char>()
-    for (element in words) {
-        for (i in 0 until element.length) dop += element[i]
-        ans.add(dop)
-        dop.clear()
-    }
-    return ans.size != words.size
-}
+fun hasAnagrams(words: List<String>): Boolean =
+        if (words.isEmpty()) false else words.size != words.map { it.toList().sorted() }.toSet().size
 
 /**
  * Сложная
