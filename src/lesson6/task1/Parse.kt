@@ -96,7 +96,7 @@ fun dateStrToDigit(str: String): String {
     }
     return if (days == null || year == null) ""
     else if (days > daysInMonth(month, year) || days < 0 || month == 0 || year < 0) ""
-    else String.format("%02d.%02d.%04d", days, month, year)
+    else String.format("%02d.%02d.%d", days, month, year)
 }
 
 /**
@@ -167,7 +167,7 @@ fun flattenPhoneNumber(phone: String): String {
  */
 fun bestLongJump(jumps: String): Int {
     var ans = -1
-    for (part in jumps.split(" ")) {
+    for (part in jumps.split(" ").filter { it != "" }) {
         val number = part.toIntOrNull()
         if (part != "-" && part != "%" && number == null) return -1
         if (ans < number ?: -2) ans = number ?: -2
@@ -191,7 +191,7 @@ fun bestHighJump(jumps: String): Int {
     var ans = -1
     for (i in 0 until parts.size - 1) {
         val number = parts[i].toIntOrNull()
-        if (number != null && number > ans && parts[i + 1][0] == '+') ans = number
+        if (number != null && number > ans && '+' in parts[i + 1]) ans = number
     }
     return ans
 }
@@ -206,7 +206,7 @@ fun bestHighJump(jumps: String): Int {
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
 fun plusMinus(expression: String): Int {
-    val parts = expression.split(" ")
+    val parts = expression.split(" ").filter { it != "" }
     if (parts.size % 2 == 0 || parts[0][0] !in '0'..'9') throw IllegalArgumentException()
     var ans = parts[0].toIntOrNull() ?: throw IllegalArgumentException()
     for (i in 2 until parts.size step 2) {
@@ -278,6 +278,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
+    if (roman == "") return -1
     val table = mapOf('I' to 1, 'V' to 5, 'X' to 10, 'L' to 50, 'C' to 100, 'D' to 500, 'M' to 1000)
     var ans = 0
     for (i in 0 until roman.length - 1) {
