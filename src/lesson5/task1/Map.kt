@@ -149,11 +149,8 @@ fun containsIn(a: Map<String, String>, b: Map<String, String>): Boolean = a.all 
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
     val ans = mutableMapOf<String, Double>()
     val number = mutableMapOf<String, Int>()
-    for ((name, value) in stockPrices) {
-        number[name] = number.getOrPut(name) { 0 } + 1
-        ans[name] = ans.getOrPut(name) { 0.0 } + value
-    }
-    ans.replaceAll { t, u -> u / number[t]!! }
+    for ((name, _) in stockPrices) number[name] = number.getOrPut(name) { 0 } + 1
+    for ((name, value) in stockPrices) ans[name] = ans.getOrPut(name) { 0.0 } + value / number[name]!!
     return ans
 }
 
