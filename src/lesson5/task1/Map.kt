@@ -251,13 +251,8 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b
  * Например:
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
-fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val charsInWord = mutableSetOf<Char>()
-    val lowerChars = mutableSetOf<Char>()
-    for (i in 0 until chars.size) lowerChars.add(chars[i].toLowerCase())
-    for (i in 0 until word.length) charsInWord.add(word[i].toLowerCase())
-    return charsInWord.intersect(lowerChars) == charsInWord
-}
+fun canBuildFrom(chars: List<Char>, word: String): Boolean =
+        word.toLowerCase().toSet() + chars.map { it.toLowerCase() }.toSet() == chars.map { it.toLowerCase() }.toSet()
 
 /**
  * Средняя
@@ -307,8 +302,10 @@ fun hasAnagrams(words: List<String>): Boolean =
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
 fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
-    for (i in 0 until list.size)
-        if (number - list[i] in list && i != list.indexOf(number - list[i])) return i to list.indexOf(number - list[i])
+    val set = list.toSet()
+    for (element in set)
+        if (number - element in set && list.indexOf(element) != list.indexOf(number - element))
+            return list.indexOf(element) to list.indexOf(number - element)
     return -1 to -1
 }
 
