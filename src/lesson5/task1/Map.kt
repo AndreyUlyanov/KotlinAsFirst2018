@@ -307,9 +307,9 @@ fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
         if (list[i] <= number) map[list[i]] = map.getOrPut(list[i]) { listOf() } + i
     }
     for ((digit, index) in map) {
-        if (map[number - digit] != null) {
-            if (number - digit == digit) return index[0] to index[1]
-            return index[0] to (map[number - digit]?.first() ?: 0)
+        if (number - digit in map.keys) {
+            if (number - digit != digit) return index[0] to (map[number - digit]?.first() ?: 0)
+            if (index.size > 1) return index[0] to index[1]
         }
     }
     return -1 to -1
