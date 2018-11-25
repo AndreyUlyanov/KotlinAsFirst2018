@@ -3,6 +3,7 @@
 package lesson7.task1
 
 import java.io.File
+import kotlin.math.round
 
 /**
  * Пример
@@ -54,7 +55,21 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    val ans = mutableMapOf<String, Int>()
+    val lowerCaseLine = File(inputName).readText().toLowerCase()
+    for (i in 0 until substrings.size) {
+        val word = substrings[i].toLowerCase()
+        var pos = lowerCaseLine.indexOf(word)
+        var count = 0
+        while (pos != -1) {
+            count++
+            pos = lowerCaseLine.indexOf(word, pos + 1)
+        }
+        ans[substrings[i]] = count
+    }
+    return ans
+}
 
 
 /**
@@ -71,7 +86,27 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val swapedLetter = mapOf('ю' to "у", 'Ю' to "У", 'я' to "а", 'Я' to "А", 'ы' to "и", 'Ы' to "И")
+    val specialLetter = listOf("Ч", "ч", "Ш", "ш", "Щ", "щ", "ж", "Ж")
+    File(outputName).bufferedWriter().use {
+        for (line in File(inputName).readLines()) {
+            val lineForOutput = mutableListOf<String>()
+            var pos = line.indexOfAny(specialLetter)
+            var prepos = 0
+            while (pos != -1) {
+                if (pos == line.length - 1) break
+                lineForOutput.add(line.substring(prepos, pos + 1))
+                prepos = if (line[pos + 1] in swapedLetter.keys) {
+                    lineForOutput.add(swapedLetter[line[pos + 1]] ?: "")
+                    pos + 2
+                } else pos + 1
+                pos = line.indexOfAny(specialLetter, pos + 1)
+            }
+            lineForOutput.add(line.substring(prepos, line.length))
+            it.write(lineForOutput.joinToString(separator = ""))
+            it.newLine()
+        }
+    }
 }
 
 /**
@@ -92,7 +127,14 @@ fun sibilants(inputName: String, outputName: String) {
  *
  */
 fun centerFile(inputName: String, outputName: String) {
-    TODO()
+    var countOfLetters = 0
+    for (line in File(inputName).readLines()) if (countOfLetters < line.trim().length) countOfLetters = line.trim().length
+    File(outputName).bufferedWriter().use {
+        for (line in File(inputName).readLines()) {
+            it.write(line.trim().padStart(countOfLetters).drop((countOfLetters - line.trim().length + 1) / 2))
+            it.newLine()
+        }
+    }
 }
 
 /**
@@ -123,7 +165,63 @@ fun centerFile(inputName: String, outputName: String) {
  * 8) Если входной файл удовлетворяет требованиям 1-7, то он должен быть в точности идентичен выходному файлу
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
-    TODO()
+    var max = 0
+    for (line in File(inputName).readLines()) {
+        if (max < standardString(line).length) max = standardString(line).length
+    }
+    File(outputName).bufferedWriter().use {
+        for (line in File(inputName).readLines()) {
+            val extraLine = line.trim()
+            if (extraLine.length == max && ruleAboutGaps(extraLine) || numberOfWords(extraLine) < 2) it.write(extraLine)
+            else {
+                val numberOfGaps = numberOfWords(extraLine) - 1
+                val wordsLength = standardString(line).length - numberOfGaps
+                val minGaps = (max - wordsLength) / numberOfGaps
+                val number = (max - wordsLength) % numberOfGaps
+                val words = standardString(extraLine).split(" ")
+                val lineForOutput = mutableListOf<String>()
+                for (index in 0 until number) {
+                    lineForOutput.add(words[index])
+                    for (u in 1..minGaps + 1) lineForOutput.add(" ")
+                }
+                lineForOutput.add(words[number])
+                for (index in number + 1 until words.size) {
+                    for (u in 1..minGaps) lineForOutput.add(" ")
+                    lineForOutput.add(words[index])
+                }
+                it.write(lineForOutput.joinToString(separator = ""))
+            }
+            it.newLine()
+        }
+    }
+}
+
+fun standardString(s: String): String {
+    if (s.isEmpty()) return s
+    val a = StringBuilder()
+    a.append(s[0])
+    for (index in 1 until s.length) {
+        if (s[index] == ' ') {
+            if (a.last() != ' ') a.append(' ')
+        } else a.append(s[index])
+    }
+    return a.toString().trim()
+}
+
+fun numberOfWords(s: String): Int = s.split(' ').filter { it != "" }.size
+
+fun ruleAboutGaps(s: String): Boolean {
+    var number = 0
+    var prenumber = s.length
+    for (char in s) {
+        if (char == ' ') number++
+        else {
+            if (number > prenumber) return false
+            prenumber = number
+            number = 0
+        }
+    }
+    return true
 }
 
 /**
@@ -145,6 +243,19 @@ fun alignFileByWidth(inputName: String, outputName: String) {
  *
  */
 fun top20Words(inputName: String): Map<String, Int> = TODO()
+
+/*
+    val allWords = mutableMapOf<String, Int>()
+    for (line in File(inputName).readLines()) {
+        val words = line.filter { it.isLetter() || it == ' ' }.split(" ").filter { it != "" }
+        for (term in words.map { it.toLowerCase() }) {
+            allWords[term] = allWords.getOrPut(term) { 0 } + 1
+        }
+    }
+    val ans = allWords.filter { it.value > 1 }.toSortedMap()
+
+    // Надо нормально отсортировать
+    return ans*/
 
 /**
  * Средняя
@@ -210,7 +321,17 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    TODO()
+    val ans = mutableMapOf<Int, Set<String>>()
+    var maxlength = 0
+    for (line in File(inputName).readLines()) {
+        val length = line.length
+        if (line.toLowerCase().toSet().size == length) {
+            ans[length] = ans.getOrPut(length) { setOf() } + line
+            if (length > maxlength) maxlength = length
+        }
+    }
+    if (ans.isNotEmpty()) File(outputName).bufferedWriter().use { it.write(ans[maxlength]?.joinToString(separator = ", ")) }
+    else File(outputName).bufferedWriter().use { it.write("") }
 }
 
 /**
