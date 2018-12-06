@@ -89,23 +89,37 @@ fun sibilants(inputName: String, outputName: String) {
     val swapedLetter = mapOf('ю' to "у", 'Ю' to "У", 'я' to "а", 'Я' to "А", 'ы' to "и", 'Ы' to "И")
     val specialLetter = listOf("Ч", "ч", "Ш", "ш", "Щ", "щ", "ж", "Ж")
     File(outputName).bufferedWriter().use {
-        for (line in File(inputName).readLines()) {
-            val lineForOutput = mutableListOf<String>()
+        val text = File(inputName).readText()
+        var pos = text.indexOfAny(specialLetter)
+        var prepos = 0
+        while (pos != -1) {
+            if (pos == text.length - 1) break
+            it.write(text.substring(prepos, pos + 1))
+            prepos = if (text[pos + 1] in swapedLetter.keys) {
+                it.write(swapedLetter[text[pos + 1]] ?: "")
+                pos + 2
+            } else pos + 1
+            pos = text.indexOfAny(specialLetter, pos + 1)
+        }
+        it.write(text.substring(prepos, text.length))
+
+        /*for (line in File(inputName).readLines()) {
+            val lineForOutput = StringBuilder()
             var pos = line.indexOfAny(specialLetter)
             var prepos = 0
             while (pos != -1) {
                 if (pos == line.length - 1) break
-                lineForOutput.add(line.substring(prepos, pos + 1))
+                lineForOutput.append(line.substring(prepos, pos + 1))
                 prepos = if (line[pos + 1] in swapedLetter.keys) {
-                    lineForOutput.add(swapedLetter[line[pos + 1]] ?: "")
+                    lineForOutput.append(swapedLetter[line[pos + 1]] ?: "")
                     pos + 2
                 } else pos + 1
                 pos = line.indexOfAny(specialLetter, pos + 1)
             }
-            lineForOutput.add(line.substring(prepos, line.length))
-            it.write(lineForOutput.joinToString(separator = ""))
+            lineForOutput.append(line.substring(prepos, line.length))
+            it.write(lineForOutput.toString())
             it.newLine()
-        }
+        }*/
     }
 }
 
