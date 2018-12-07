@@ -107,7 +107,7 @@ data class Segment(val begin: Point, val end: Point) {
  */
 fun diameter(vararg points: Point): Segment {
     if (points.size < 2) throw IllegalArgumentException()
-    val point = findFar(points, findFar(points, Point(0.0, 0.0)))
+    val point = findFar(points, findFar(points, points[0]))
     return Segment(point, findFar(points, point))
 }
 
@@ -153,7 +153,8 @@ class Line private constructor(val b: Double, val angle: Double) {
     fun crossPoint(other: Line): Point {
         if (angle != other.angle) {
             val y = (other.b * sin(angle) - b * sin(other.angle)) / sin(angle - other.angle)
-            val x = (y * cos(angle) - b) / sin(angle)
+            val x = if (angle == 0.0) (y * cos(angle) - b) / sin(other.angle)
+            else (y * cos(angle) - b) / sin(angle)
             return Point(x, y)
         }
         return Point(0.0, b / cos(angle))

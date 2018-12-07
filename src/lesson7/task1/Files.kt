@@ -193,17 +193,17 @@ fun alignFileByWidth(inputName: String, outputName: String) {
                 val minGaps = (max - wordsLength) / numberOfGaps
                 val number = (max - wordsLength) % numberOfGaps
                 val words = standardString(extraLine).split(" ")
-                val lineForOutput = mutableListOf<String>()
+                val lineForOutput = StringBuilder()
                 for (index in 0 until number) {
-                    lineForOutput.add(words[index])
-                    for (u in 1..minGaps + 1) lineForOutput.add(" ")
+                    lineForOutput.append(words[index])
+                    lineForOutput.append(" ".repeat(minGaps + 1))
                 }
-                lineForOutput.add(words[number])
+                lineForOutput.append(words[number])
                 for (index in number + 1 until words.size) {
-                    for (u in 1..minGaps) lineForOutput.add(" ")
-                    lineForOutput.add(words[index])
+                    lineForOutput.append(" ".repeat(minGaps))
+                    lineForOutput.append(words[index])
                 }
-                it.write(lineForOutput.joinToString(separator = ""))
+                it.write(lineForOutput.toString())
             }
             it.newLine()
         }
@@ -335,16 +335,19 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun chooseLongestChaoticWord(inputName: String, outputName: String) {
-    val ans = mutableMapOf<Int, Set<String>>()
+    val ans = mutableSetOf<String>()
     var maxlength = 0
     for (line in File(inputName).readLines()) {
         val length = line.length
         if (line.toLowerCase().toSet().size == length) {
-            ans[length] = ans.getOrPut(length) { setOf() } + line
-            if (length > maxlength) maxlength = length
+            if (length > maxlength) {
+                maxlength = length
+                ans.clear()
+            }
+            if (maxlength == length) ans.add(line)
         }
     }
-    if (ans.isNotEmpty()) File(outputName).bufferedWriter().use { it.write(ans[maxlength]?.joinToString(separator = ", ")) }
+    if (ans.isNotEmpty()) File(outputName).bufferedWriter().use { it.write(ans.joinToString(separator = ", ")) }
     else File(outputName).bufferedWriter().use { it.write("") }
 }
 
