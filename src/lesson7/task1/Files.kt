@@ -102,24 +102,6 @@ fun sibilants(inputName: String, outputName: String) {
             pos = text.indexOfAny(specialLetter, pos + 1)
         }
         it.write(text.substring(prepos, text.length))
-
-        /*for (line in File(inputName).readLines()) {
-            val lineForOutput = StringBuilder()
-            var pos = line.indexOfAny(specialLetter)
-            var prepos = 0
-            while (pos != -1) {
-                if (pos == line.length - 1) break
-                lineForOutput.append(line.substring(prepos, pos + 1))
-                prepos = if (line[pos + 1] in swapedLetter.keys) {
-                    lineForOutput.append(swapedLetter[line[pos + 1]] ?: "")
-                    pos + 2
-                } else pos + 1
-                pos = line.indexOfAny(specialLetter, pos + 1)
-            }
-            lineForOutput.append(line.substring(prepos, line.length))
-            it.write(lineForOutput.toString())
-            it.newLine()
-        }*/
     }
 }
 
@@ -257,19 +239,6 @@ fun ruleAboutGaps(s: String): Boolean {
  *
  */
 fun top20Words(inputName: String): Map<String, Int> = TODO()
-
-/*
-    val allWords = mutableMapOf<String, Int>()
-    for (line in File(inputName).readLines()) {
-        val words = line.filter { it.isLetter() || it == ' ' }.split(" ").filter { it != "" }
-        for (term in words.map { it.toLowerCase() }) {
-            allWords[term] = allWords.getOrPut(term) { 0 } + 1
-        }
-    }
-    val ans = allWords.filter { it.value > 1 }.toSortedMap()
-
-    // Надо нормально отсортировать
-    return ans*/
 
 /**
  * Средняя

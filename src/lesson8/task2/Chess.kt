@@ -47,7 +47,7 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = if (notation[0] !in 'a'..'h' || notation[1] !in '1'..'8' || notation.length != 2)
+fun square(notation: String): Square = if (notation.length != 2 || notation[0] !in 'a'..'h' || notation[1] !in '1'..'8')
     throw IllegalArgumentException() else
     when (notation[0]) {
         'a' -> Square(1, notation[1] - '0')
