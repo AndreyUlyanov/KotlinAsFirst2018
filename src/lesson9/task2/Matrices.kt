@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_PARAMETER")
 package lesson9.task2
 
+import lesson9.task1.Cell
 import lesson9.task1.Matrix
 import lesson9.task1.createMatrix
 
@@ -244,7 +245,46 @@ operator fun Matrix<Int>.times(other: Matrix<Int>): Matrix<Int> = TODO(this.toSt
  * 0  4 13  6
  * 3 10 11  8
  */
-fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> = TODO()
+fun fifteenGameMoves(matrix: Matrix<Int>, moves: List<Int>): Matrix<Int> {
+    var cell = Cell(-1, -1)
+    for (row in 0 until matrix.height) {
+        for (column in 0 until matrix.width) {
+            if (matrix[row, column] == 0) {
+                cell = Cell(row, column)
+                break
+            }
+        }
+        if (cell != Cell(-1, -1)) break
+    }
+    for (i in moves) {
+        if (i < 1 || i > 15) throw IllegalStateException()
+        val dopcell = cell
+        when {
+            cell.column != 0 && i == matrix[cell.row, cell.column - 1] -> {
+                matrix[cell.row, cell.column - 1] = 0
+                matrix[cell] = i
+                cell = Cell(cell.row, cell.column - 1)
+            }
+            cell.column != matrix.width - 1 && i == matrix[cell.row, cell.column + 1] -> {
+                matrix[cell.row, cell.column + 1] = 0
+                matrix[cell] = i
+                cell = Cell(cell.row, cell.column + 1)
+            }
+            cell.row != 0 && i == matrix[cell.row - 1, cell.column] -> {
+                matrix[cell.row - 1, cell.column] = 0
+                matrix[cell] = i
+                cell = Cell(cell.row - 1, cell.column)
+            }
+            cell.row != matrix.height - 1 && i == matrix[cell.row + 1, cell.column] -> {
+                matrix[cell.row + 1, cell.column] = 0
+                matrix[cell] = i
+                cell = Cell(cell.row + 1, cell.column)
+            }
+        }
+        if (dopcell == cell) throw IllegalStateException()
+    }
+    return matrix
+}
 
 /**
  * Очень сложная
